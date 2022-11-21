@@ -40,7 +40,6 @@
 
 # include <stdint.h>
 # include <stddef.h>
-// # include <bcm2835.h>
 # include <wiringPi.h>
 
 #define BUFFER_LENGTH       100         // tx-buffer

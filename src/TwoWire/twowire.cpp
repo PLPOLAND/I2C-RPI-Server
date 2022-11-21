@@ -58,9 +58,8 @@
  *     setPullup() call to allow adding pull-up resistors to SDA & SCL
  *********************************************************************/
 
-// # include <bcm2835.h>
 # include <stdio.h>
-# include "twowire.h"
+# include "../../include/twowire.h"
 
 ///////////////////////////////////////////////////////////////////////
 // Initialize Class Variables for soft implementation  ////////////////
