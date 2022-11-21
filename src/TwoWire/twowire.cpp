@@ -58,7 +58,7 @@
  *     setPullup() call to allow adding pull-up resistors to SDA & SCL
  *********************************************************************/
 
-# include <bcm2835.h>
+// # include <bcm2835.h>
 # include <stdio.h>
 # include "twowire.h"
 
@@ -198,8 +198,8 @@ void TwoWire::close() {
     /* if pull-up resistors was set, remove them */
     if (twSetting.Pullup)
     {
-        bcm2835_gpio_set_pud(twSetting.twi_sda, BCM2835_GPIO_PUD_OFF);
-        bcm2835_gpio_set_pud(twSetting.twi_scl, BCM2835_GPIO_PUD_OFF);
+        pullUpDnControl(twSetting.twi_sda, PUD_OFF);
+        pullUpDnControl(twSetting.twi_scl, PUD_OFF);
     }
   }
   
@@ -229,13 +229,9 @@ void TwoWire::setClock(uint16_t frequency){
   if (frequency < 1 || frequency > 400) return;
    
   twSetting.baudrate = frequency;
-    
-  /* set BCM2835 */
-  if (twSetting.hw_interface == hard_I2C)
-    bcm2835_i2c_set_baudrate(frequency * 1000);
 
   /* set soft_I2C */
-  else twi_setClock(frequency);
+  twi_setClock(frequency);
 }
 
 /******************************************
@@ -319,7 +315,8 @@ Wstatus TwoWire::i2c_write(char *buff, uint8_t length) {
     if (! twSetting.hw_initialized) return(TW_GENERIC_ERROR);
     
     /* hardware I2C */
-    if (twSetting.hw_interface == hard_I2C) return(bcm_write(buff, length));
+    if (twSetting.hw_interface == hard_I2C)
+      return (TW_GENERIC_ERROR);
 
     /************ soft I2C ***********/
     
@@ -346,9 +343,6 @@ Wstatus TwoWire::i2c_read(char *buff, uint8_t length) {
     /* if not initialized  */
     if (! twSetting.hw_initialized) return(TW_GENERIC_ERROR);
     
-    /* hardware I2C */
-    if (twSetting.hw_interface == hard_I2C) return(bcm_read(buff, length));
-    
     /* soft I2C : read into buffer and stop */
     return(twi_readFrom((uint8_t *) buff, length, 1));
 }
@@ -367,10 +361,6 @@ Wstatus TwoWire::i2c_read_rs(char * regaddr, char *buff, uint8_t length) {
     
     /* if not initialized  */
     if (! twSetting.hw_initialized) return(TW_GENERIC_ERROR);
-    
-    /* hardware I2C */
-    if (twSetting.hw_interface == hard_I2C)
-        return(bcm_read_rs(regaddr, buff, length));
 
     /* soft I2C : read into buffer with restart and stop */
     return(twi_readFrom_rs(regaddr,  (uint8_t *) buff, length));
@@ -473,21 +463,21 @@ void TwoWire::flush(void) {
 
 #define SDA_LOW()   (SET_L(twSetting.twi_sda,LOW))      
 #define SDA_HIGH()  (SET_L(twSetting.twi_sda,HIGH))
-#define SDA_READ()  (bcm2835_gpio_lev(twSetting.twi_sda))         
+#define SDA_READ()  (digitalRead(twSetting.twi_sda))         
 #define SCL_LOW()   (SET_L(twSetting.twi_scl,LOW))
 #define SCL_HIGH()  (SET_L(twSetting.twi_scl,HIGH))  
-#define SCL_READ()  (bcm2835_gpio_lev(twSetting.twi_scl))
+#define SCL_READ()  (digitalRead(twSetting.twi_scl))
 
 void SET_L (unsigned char line, bool level) {
     
     if (!level)     // set low
     {
-        bcm2835_gpio_fsel(line, BCM2835_GPIO_FSEL_OUTP);
-        bcm2835_gpio_write(line, LOW);
+        pinMode(line, OUTPUT);
+        digitalWrite(line, LOW);
     }
     else            // enable high
     {
-        bcm2835_gpio_fsel(line, BCM2835_GPIO_FSEL_INPT);
+        pinMode(line, INPUT);
     }
 }
 
@@ -1168,159 +1158,6 @@ Wstatus TwCore::twi_status() {
     
     /* all OK */
     return I2C_OK;
-}
-
-/*********************************************************************
- * 
- * Initialize the BCM2835 library for the raspberry Pi
- * and set for hardware I2C communication
- *
- *********************************************************************/
-
-Wstatus BcmCore::bcm_init() {
- 
-    if (!bcm2835_init()) {
-        db_print((char *)"Can't init bcm2835!\n");
-        return(TW_INTERNAL_ERROR);
-    }
-
-    /* will select I2C channel 0 or 1 depending on board reversion. */
-    if (!bcm2835_i2c_begin()){
-        db_print((char *)"Can't setup i2c pin!\n");
-        return(TW_INTERNAL_ERROR);
-    }
- 
-    /* set speed */
-    bcm2835_i2c_set_baudrate(twSetting.baudrate *1000);
-
-    return(TW_SUCCESS);
-}
-
-/*********************************************************************
- * close the BCM2835 library for the raspberry Pi
- *********************************************************************/
-
-void BcmCore::bcm_close() {
-    
-    /* reset pins */
-    bcm2835_i2c_end();
-   
-    /* release memory */
-    bcm2835_close();
-} 
-
-/*********************************************************************
- *
- * hard : write data from buff with length to the I2c device
- * slave address must have been set before with set_slave()
- *
- *********************************************************************/
-
-Wstatus BcmCore::bcm_write(char *buff, uint8_t length) {
-    
-    int     result;
-
-    /* set slave address */
-    bcm2835_i2c_setSlaveAddress(twSetting.Slave_address);
-
-    /* perform a write of data */
-    result = bcm2835_i2c_write(buff, length);
-    
-    switch(result)
-    {
-        case BCM2835_I2C_REASON_ERROR_NACK :
-            db_print((char *)"write NACK error\n");
-            return(I2C_SDA_NACK);
-    
-        case BCM2835_I2C_REASON_ERROR_CLKT :
-            db_print((char *)"write Clock stretch error\n");
-            return(I2C_SCL_CLKSTR);
-    
-        case BCM2835_I2C_REASON_ERROR_DATA :
-            db_print((char *)"write not all data has been sent\n");
-            return(I2C_SDA_DATA);
-    
-        case BCM2835_I2C_REASON_OK:
-            return(I2C_OK);
-    
-        default :
-            db_print((char *)"Unkown error during writing\n");
-            return(I2C_SDA_DATA);
-    }
-}
-
-/*********************************************************************
- *
- * hard : read data from device into buff with length 
- * slave address must have been set before with set_slave()
- *
- *********************************************************************/
-
-Wstatus BcmCore::bcm_read(char *buff, uint8_t length) {
-    
-    int result;
-
-    /* set slave address */
-    bcm2835_i2c_setSlaveAddress(twSetting.Slave_address);
-    
-    result = bcm2835_i2c_read(buff, length);
-
-    /* process result */
-    switch(result)
-    {
-        case BCM2835_I2C_REASON_ERROR_NACK :
-            db_print((char *)"NACK error\n");
-            return(I2C_SDA_NACK);
-
-        case BCM2835_I2C_REASON_ERROR_CLKT :
-            db_print((char *)"Clock stretch error\n");
-            return(I2C_SCL_CLKSTR);
-            
-        case BCM2835_I2C_REASON_ERROR_DATA :
-            db_print((char *)"not all data has been read\n");
-            return(I2C_SDA_DATA);
-            
-        case BCM2835_I2C_REASON_OK:
-            return(I2C_OK);
-            
-        default:
-            db_print((char *)"unkown return code\n");
-            return(I2C_SDA_DATA);
-    }
-}
-
-
-Wstatus BcmCore::bcm_read_rs(char * regaddr, char *buff, uint8_t length) {
-    
-    int result;
-
-    /* set slave address */
-    bcm2835_i2c_setSlaveAddress(twSetting.Slave_address);
-    
-    result = bcm2835_i2c_read_register_rs(regaddr, buff, length);
-
-    /* process result */
-    switch(result)
-    {
-        case BCM2835_I2C_REASON_ERROR_NACK :
-            db_print((char *)"NACK error\n");
-            return(I2C_SDA_NACK);
-
-        case BCM2835_I2C_REASON_ERROR_CLKT :
-            db_print((char *)"Clock stretch error\n");
-            return(I2C_SCL_CLKSTR);
-            
-        case BCM2835_I2C_REASON_ERROR_DATA :
-            db_print((char *)"not all data has been read\n");
-            return(I2C_SDA_DATA);
-            
-        case BCM2835_I2C_REASON_OK:
-            return(I2C_OK);
-            
-        default:
-            db_print((char *)"unkown return code\n");
-            return(I2C_SDA_DATA);
-    }
 }
 
 /*********************************************************************
