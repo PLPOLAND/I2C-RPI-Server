@@ -8,8 +8,8 @@
       "args": [],
       "stopAtEntry": false,
       "externalConsole": false,
-      "cwd": "/home/pi/Github/I2C-RPI-Server/src",
-      "program": "/home/pi/Github/I2C-RPI-Server/src/build/Debug/outDebug",
+      "cwd": "/home/pi/github/I2C-RPI-Server/src",
+      "program": "/home/pi/github/I2C-RPI-Server/src/build/Debug/outDebug",
       "MIMode": "gdb",
       "miDebuggerPath": "gdb",
       "setupCommands": [

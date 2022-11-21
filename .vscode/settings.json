@@ -11,7 +11,8 @@
   "C_Cpp_Runner.compilerArgs": [],
   "C_Cpp_Runner.linkerArgs": [
     "-ltwowire ",
-    "-lbcm2835"
+    "-lbcm2835",
+    "-lwiringPi"
   ],
   "C_Cpp_Runner.includePaths": [],
   "C_Cpp_Runner.includeSearch": [
