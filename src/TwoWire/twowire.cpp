@@ -59,6 +59,8 @@
  *********************************************************************/
 
 # include <stdio.h>
+# include <iostream>
+# include <bitset>
 # include "../../include/twowire.h"
 
 ///////////////////////////////////////////////////////////////////////
@@ -477,6 +479,7 @@ void SET_L (unsigned char line, bool level) {
     else            // enable high
     {
         pinMode(line, INPUT);
+        // digitalWrite(line, HIGH);
     }
 }
 
@@ -964,11 +967,14 @@ uint8_t TwCore::twi_read_byte(bool nack) {
   uint8_t byte = 0;
   uint8_t bit;
 
-  for (bit = 0; bit < 8; bit++)
-    byte = (byte << 1) | twi_read_bit();
+  for (bit = 0; bit < 8; bit++){
+    bool bitt = twi_read_bit();
+    byte = (byte << 1) | bitt;
+  }
 
   twi_write_bit(nack);
 
+  std::cout << "read: " << std::bitset<8>(byte) << std::endl;
   return byte;
 }
 
