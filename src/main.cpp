@@ -2,7 +2,6 @@
 #include <iostream>
 #include <unistd.h>
 #include "../include/twowire.h"
-#include <wiringPiI2C.h>
 
 #include "../include/NetServer.hpp"
 

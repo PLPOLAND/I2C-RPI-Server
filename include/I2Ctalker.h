@@ -26,7 +26,7 @@ private:
     vector<Command> toSend; //buffor for messages to send
     vector<Command> recieved; //buffor for messages recieved from slaves
 
-    thread* thread = nullptr;
+    thread* thr = nullptr; 
 
     void send(Command comm);
     void send(string msg, int adress);

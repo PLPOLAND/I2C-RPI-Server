@@ -39,7 +39,7 @@ void I2Ctalker::send( string msg, int adress){
  * @return string msg
  */
 string I2Ctalker::getMsg(){
-
+    return "";
 }
 
 /**
