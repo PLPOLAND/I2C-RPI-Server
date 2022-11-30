@@ -40,7 +40,13 @@
 
 # include <stdint.h>
 # include <stddef.h>
-# include <wiringPi.h>
+
+#ifdef __arm__
+#include <wiringPi.h>
+#endif
+#ifndef __arm__
+//TODO dodać "symulowanie wiringPi na użądzeniach innych niż PI"
+#endif
 
 #define BUFFER_LENGTH       100         // tx-buffer
 #define default_si2c_clock  100         // 100Khz default

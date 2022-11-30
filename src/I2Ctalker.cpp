@@ -7,7 +7,19 @@ I2Ctalker::I2Ctalker()
 
 I2Ctalker::~I2Ctalker()
 {
+    stop = true;
+    this->thr->join();
     delete arduino;
+}
+
+void I2Ctalker::start(){
+    this->thr = new std::thread([](bool* stop){
+        while (stop*)
+        {
+            
+        }
+        
+        }, this->stop);
 }
 
 /**
