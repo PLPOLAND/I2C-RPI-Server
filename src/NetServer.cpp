@@ -15,8 +15,8 @@ NetServer::NetServer()
 
     int opt = 1;
     if (setsockopt(server_file, SOL_SOCKET,
-                   SO_REUSEADDR | SO_REUSEPORT, &opt,
-                   sizeof(opt)))
+        SO_REUSEADDR | SO_REUSEPORT, &opt,
+        sizeof(opt)))
     {
         perror("setsockopt");
         exit(EXIT_FAILURE);
@@ -28,8 +28,8 @@ NetServer::NetServer()
 
     //attaching socket to the port
 
-    if (bind(server_file, (struct sockaddr *)&address,
-             sizeof(address)) < 0)
+    if (bind(server_file, (struct sockaddr*)&address,
+        sizeof(address)) < 0)
     {
         perror("bind failed");
         exit(EXIT_FAILURE);
@@ -40,7 +40,7 @@ NetServer::NetServer()
         exit(EXIT_FAILURE);
     }
 
-    
+
 
 
 }
@@ -51,18 +51,18 @@ NetServer::~NetServer()
     delete buffor;
 }
 
-void NetServer::connect(){
-    if ((gnd = accept(server_file, (struct sockaddr *)&address, (socklen_t *)&addrlen)) < 0)
+void NetServer::connect() {
+    if ((gnd = accept(server_file, (struct sockaddr*)&address, (socklen_t*)&addrlen)) < 0)
     {
         perror("accept");
         exit(EXIT_FAILURE);
     }
 }
 
-void NetServer::write(uint8_t *msg, int size){
+void NetServer::write(uint8_t* msg, int size) {
     send(gnd, msg, size, 0);
 }
 
-int NetServer::recv(){
+int NetServer::recv() {
     return read(gnd, buffor, 1024);
 }

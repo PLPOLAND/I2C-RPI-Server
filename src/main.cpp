@@ -6,12 +6,14 @@
 
 #include "../include/NetServer.hpp"
 
-#include <netinet/in.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <sys/socket.h>
-#include <unistd.h>
+// #include <netinet/in.h>
+// #include <stdio.h>
+// #include <stdlib.h>
+// #include <string.h>
+// #include <sys/socket.h>
+// #include <unistd.h>
+
+#include <thread>
 
 using namespace std;
 
@@ -53,13 +55,13 @@ int main(){
     //                netTEST
     /////////////////////////////////////////////////////////////////
 
-    NetServer* server = new NetServer;
+    // NetServer* server = new NetServer;
 
-    server->connect();
-    server->recv();
-    std::cout<< server->buffor;
+    // server->connect();
+    // server->recv();
+    // std::cout<< server->buffor;
     
-    server->write((uint8_t*)"HakunaMatata", 13);
+    // server->write((uint8_t*)"HakunaMatata", 13);
 
     // int server_fd, new_socket, valread;
     // struct sockaddr_in address;
@@ -114,5 +116,16 @@ int main(){
     // close(new_socket);
     // // closing the listening socket
     // shutdown(server_fd, SHUT_RDWR);
+
+    ///////////////////////////////////////////////////
+    //////////////////THREAD TEST//////////////////////
+    ///////////////////////////////////////////////////
+
+    thread t1([](){
+        cout<< "hi" << endl;
+    });
+
+    t1.join();
+
     return 0;
 }

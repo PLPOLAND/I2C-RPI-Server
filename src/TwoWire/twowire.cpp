@@ -307,7 +307,7 @@ void TwoWire::DispClockStretch()
  * slave address must have been provided before
  ********************************************************/
  
-Wstatus TwoWire::i2c_write(char *buff, uint8_t length) {
+Wstatus TwoWire::i2c_write(const char *buff, uint8_t length) {
     
     /* slave address was not set */
     if (twSetting.Slave_address == 0) return(TW_PARAM_ERROR);
@@ -404,7 +404,7 @@ Wstatus TwoWire::endTransmission(void) {
  * return: byte added
  ********************************************/
 
-size_t TwoWire::write(char data) {
+size_t TwoWire::write(const char data) {
        
     if(transmitting)    // set during beginTransmission
     {
@@ -426,7 +426,7 @@ size_t TwoWire::write(char data) {
  * 
  * return the quantity added
  **********************************************/
-size_t TwoWire::write(char *data, uint8_t quantity) {
+size_t TwoWire::write(const char *data, uint8_t quantity) {
     
     for(size_t i = 0; i < quantity; ++i)
     {
