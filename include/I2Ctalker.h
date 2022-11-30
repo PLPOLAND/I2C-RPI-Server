@@ -6,8 +6,9 @@
 #include <string>
 #include "twowire.h"
 #include "Command.h"
-#include <vector>
+#include <queue>
 #include <thread>
+#include <atomic>
 
 using namespace std;
 
@@ -17,23 +18,29 @@ public:
     I2Ctalker();
     ~I2Ctalker();
 
+    void send(uint8_t*, int, int);
     string getMsg();
 
+    void start();
     
 private:
-    explicit bool stop = false;
+    std::atomic<bool> stop = false;
 
     TwoWire* arduino; //obj to send and read to/from slaves
 
-    vector<Command> toSend; //buffor for messages to send
-    vector<Command> recieved; //buffor for messages recieved from slaves
+    queue<Command*> toSend; //buffor for messages to send
+    queue<Command*> recieved; //buffor for messages recieved from slaves
 
     thread* thr = nullptr;
 
-    void start();
 
-    void send(Command comm);
-    void send(string msg, int adress);
+    void _send(Command comm);
+    void _send(uint8_t* msg, int size, int adress);
+    
+    void recieve(int adress);
+    void operator()();
+
+
     bool correctAdress(int);
 };
 

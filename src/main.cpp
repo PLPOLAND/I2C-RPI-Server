@@ -4,6 +4,7 @@
 #include "../include/twowire.h"
 
 #include "../include/NetServer.hpp"
+#include "../include/I2Ctalker.h"
 
 // #include <netinet/in.h>
 // #include <stdio.h>
@@ -120,11 +121,14 @@ int main(){
     //////////////////THREAD TEST//////////////////////
     ///////////////////////////////////////////////////
 
-    thread t1([](){
-        cout<< "hi" << endl;
-    });
+    I2Ctalker* talker = new I2Ctalker;
+    talker->start();
+    uint8_t tmp[] = {0,2,0,4,5,6,7};
+    talker->send(tmp,7,10);
 
-    t1.join();
+    delay(100000);
+
+    delete talker;
 
     return 0;
 }

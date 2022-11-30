@@ -5,22 +5,26 @@
 
 #include <iostream>
 #include <string>
+#include <cstring>
+#include <cmath>
 
 class Command
 {
 public:
     Command();
     ~Command();
-    Command(std::string , int);
+    Command(uint8_t* ,int , int);
 
-    void setMsg(std::string);
+    void setMsg(uint8_t*, int);
     void setAddr(int);
-    std::string getMsg();
+    int getMsg(uint8_t*, int);
     int getAddr();
+    int getMsgSize();
 
     std::string toString();
 private:
-    std::string msg;
+    uint8_t msg[10];
+    int msg_size;
     int destAddr;
 
 

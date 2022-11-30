@@ -245,12 +245,12 @@ public:
     /* write a buffer of data to the slave device, using the selected 
      * I2C communicator (hardware or software)
      */
-    Wstatus i2c_write(const char *buff, uint8_t length);
+    Wstatus i2c_write(uint8_t *buff, uint8_t length);
     
     /* read into a buffer data from the slave device, using the selected 
      * I2C communicator (hardware or software)
      */
-    Wstatus i2c_read(char *buff, uint8_t length);
+    Wstatus i2c_read(uint8_t *buff, uint8_t length);
     
     /* read into a buffer data from a register of a slave device. This 
      * will be done with repeated start. Some slave devices require this */
@@ -304,10 +304,10 @@ private:
     size_t requestFrom( size_t size, bool sendStop);
     
     /* write single byte to slave */
-    size_t write(const char data);
+    size_t write(uint8_t data);
     
     /* write buffer of bytes to slave */
-    size_t write(const char *data, uint8_t quantity);
+    size_t write(uint8_t *data, uint8_t quantity);
 };
 
 #endif  // End of definition check
