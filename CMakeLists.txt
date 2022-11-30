@@ -8,7 +8,8 @@ add_subdirectory(src/TwoWire)
 add_executable(I2C-RPI-SERVER src/main.cpp
                 src/NetServer.cpp 
                 src/I2Ctalker.cpp
-                src/Command.cpp)
+                src/Command.cpp
+                src/wiringPISimulate.cpp)
 
 add_link_options(-lwiringPi)
 add_link_options(-pthread)
@@ -17,8 +18,8 @@ SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -pthread")
 
 add_library(NetServer src/NetServer.cpp)
 
-# target_link_libraries(I2C-RPI-SERVER PUBLIC twowire)
-target_link_libraries(I2C-RPI-SERVER PUBLIC wiringPi)
+target_link_libraries(I2C-RPI-SERVER PUBLIC twowire)
+# target_link_libraries(I2C-RPI-SERVER PUBLIC wiringPi)
 target_compile_features( I2C-RPI-SERVER PUBLIC cxx_std_17)
 
 target_include_directories(I2C-RPI-SERVER PUBLIC
