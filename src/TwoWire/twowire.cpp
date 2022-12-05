@@ -65,11 +65,11 @@
 # include "../../include/twowire.h"
 
 
-void _delay(uint64_t sec, uint64_t usec) {
+void _delay(uint64_t msec, uint64_t usec) {
   timeval tNow, tLong, tEnd;
 
   gettimeofday(&tNow, NULL);
-  tLong.tv_sec = sec + usec / 1000000;
+  tLong.tv_sec = msec/1000 + usec / 1000000;
   tLong.tv_usec = usec % 1000000;
   timeradd(&tNow, &tLong, &tEnd);
 

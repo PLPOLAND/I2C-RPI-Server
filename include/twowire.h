@@ -50,7 +50,7 @@
 // #endif
 
 
-void _delay(uint64_t sec, uint64_t usec = 0);
+void _delay(uint64_t msec, uint64_t usec = 0);
 #define BUFFER_LENGTH       100         // tx-buffer
 #define default_si2c_clock  100         // 100Khz default
 #define default_si2c_stretch 200        // 200us max for clock stretch

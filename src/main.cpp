@@ -126,9 +126,9 @@ int main(){
     talker->scan();
     uint8_t tmp[] = {0,2,0,4,5,6,7};
     talker->send(tmp,7,16);
-    _delay(100000); 
+    _delay(10000); 
     talker->send(tmp,7,16);
-    _delay(100000); 
+    _delay(10000); 
 
     delete talker;
 
