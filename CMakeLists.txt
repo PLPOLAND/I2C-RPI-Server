@@ -19,7 +19,7 @@ SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -pthread")
 add_library(NetServer src/NetServer.cpp)
 
 target_link_libraries(I2C-RPI-SERVER PUBLIC twowire)
-# target_link_libraries(I2C-RPI-SERVER PUBLIC wiringPi)
+target_link_libraries(I2C-RPI-SERVER PUBLIC wiringPi)
 target_compile_features( I2C-RPI-SERVER PUBLIC cxx_std_17)
 
 target_include_directories(I2C-RPI-SERVER PUBLIC

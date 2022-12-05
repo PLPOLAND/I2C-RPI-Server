@@ -22,6 +22,7 @@ public:
     string getMsg();
 
     void start();
+    void scan();
     
 private:
     std::atomic<bool> stop = false;
@@ -42,6 +43,8 @@ private:
 
 
     bool correctAdress(int);
+
+
 };
 
 #endif

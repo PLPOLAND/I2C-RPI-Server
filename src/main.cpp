@@ -45,7 +45,7 @@ int main(){
     // }
     // std::cout << tw->linestatus() << std::endl;
     
-    // // delay(10);
+    // // _delay(10);
     // // std::cout << "LS" <<std::endl;
     // tw->DispClockStretch();
     // tw->flush();
@@ -123,10 +123,12 @@ int main(){
 
     I2Ctalker* talker = new I2Ctalker;
     talker->start();
+    talker->scan();
     uint8_t tmp[] = {0,2,0,4,5,6,7};
-    talker->send(tmp,7,10);
-
-    delay(100000);
+    talker->send(tmp,7,16);
+    _delay(100000); 
+    talker->send(tmp,7,16);
+    _delay(100000); 
 
     delete talker;
 

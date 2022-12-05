@@ -3,6 +3,7 @@
 I2Ctalker::I2Ctalker()
 {
     arduino = new TwoWire;
+    arduino->begin(soft_I2C,8,9);
 }
 
 I2Ctalker::~I2Ctalker()
@@ -34,7 +35,7 @@ void I2Ctalker::operator()(){
         else{
             // cout<<"Nothing to sent"<<endl;
             cout.flush();
-            delay(2);//to reduece processor usage
+            _delay(2);//to reduece processor usage
         }
 
     }
@@ -63,11 +64,18 @@ void I2Ctalker::_send(Command comm){
 void I2Ctalker::_send( uint8_t* msg,int size, int adress){
     arduino->setSlave(adress);
     //TODO sprawdzić czy istnieje taki adres (NACK)
-    while (arduino->i2c_write(msg, size) != I2C_OK)
+    Wstatus ret;
+    int i = 0;
+    while ((ret = arduino->i2c_write(msg, size)) != I2C_OK)
     {
+        cout << (int)ret<<endl;
+        if(i++>10){
+            cout << endl<<"error"<<endl;
+            exit(1);
+        }
         //TODO dodać sprawdzanie czy slave się nie zawiesił!    
     }
-    
+    cout<<"msg sent"<<endl;
 }
 
 /**
@@ -82,7 +90,15 @@ void I2Ctalker::recieve(int adress){
     uint8_t buff[8];
     arduino->setSlave(adress);
     //TODO sprawdzić czy istnieje taki adres (NACK)
-    while (arduino->i2c_read(buff,8)== I2C_OK){
+    Wstatus ret;
+    int i = 0;
+    while ((ret = arduino->i2c_read(buff,8))!= I2C_OK){
+        cout << (int)ret << endl;
+        if (i++ > 10) {
+            cout << endl << "error" << endl;
+            exit(1);
+        }
+
         //TODO dodać sprawdzanie czy slave się nie zawiesił!  
     }
     Command * comm = new Command;
@@ -98,7 +114,7 @@ void I2Ctalker::recieve(int adress){
  * @return true - if adress is in correct interval
  */
 bool I2Ctalker::correctAdress(int adr){
-    return !(adr<9 || adr>127);
+    return !(adr<8 || adr>127);
 }
 
 void I2Ctalker::send(uint8_t* msg, int size, int adress ){
@@ -107,4 +123,22 @@ void I2Ctalker::send(uint8_t* msg, int size, int adress ){
     comm->setAddr(adress);
     comm->setMsg(msg, size);
     this->toSend.push(comm);
+}
+
+void I2Ctalker::scan(){
+
+    for(int i=8; i<127; i++){
+        Wstatus tmp;
+        static uint8_t msg[1] = {0};
+        arduino->setSlave(i);
+        tmp = arduino->i2c_write(msg,1);
+        cout<<i<<":\t";
+        if(tmp != I2C_SDA_NACK){
+            cout << "OK ("<<(int)tmp<<")"<<endl;
+        }
+        else{
+            cout << "NOT CONNECTED(" << (int)tmp << ")" << endl;
+        }
+    }
+
 }

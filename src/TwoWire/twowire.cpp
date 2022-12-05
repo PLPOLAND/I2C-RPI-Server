@@ -61,7 +61,24 @@
 # include <stdio.h>
 # include <iostream>
 # include <bitset>
+#include <sys/time.h>
 # include "../../include/twowire.h"
+
+
+void _delay(uint64_t sec, uint64_t usec) {
+  timeval tNow, tLong, tEnd;
+
+  gettimeofday(&tNow, NULL);
+  tLong.tv_sec = sec + usec / 1000000;
+  tLong.tv_usec = usec % 1000000;
+  timeradd(&tNow, &tLong, &tEnd);
+
+  while (timercmp(&tNow, &tEnd, < ))
+    gettimeofday(&tNow, NULL);
+
+}
+
+
 
 ///////////////////////////////////////////////////////////////////////
 // Initialize Class Variables for soft implementation  ////////////////
@@ -693,8 +710,10 @@ void TwCore::twi_stop(void){
  ******************************************************************/
 
 void TwCore::twi_delay(uint64_t usec){
-    delay(usec);
+    _delay(usec);
 }
+
+
 
 /**********************************************
  * software I2C

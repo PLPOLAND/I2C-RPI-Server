@@ -89,5 +89,5 @@ std::string Command::toString() {
  * @return true - if adress is in correct interval
  */
 bool Command::correctAdress(int adr) {
-    return !(adr < 9 || adr>127);
+    return !(adr < 8 || adr>127);
 }
