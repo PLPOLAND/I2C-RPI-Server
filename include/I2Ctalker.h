@@ -23,7 +23,8 @@ public:
 
     void start();
     void scan();
-    
+    int sentQueueSize();
+
 private:
     std::atomic<bool> stop = false;
 

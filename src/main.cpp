@@ -1,10 +1,10 @@
-#include <ctime>
-#include <iostream>
-#include <unistd.h>
-#include "../include/twowire.h"
+// #include <ctime>
+// #include <iostream>
+// #include <unistd.h>
+// #include "../include/twowire.h"
 
-#include "../include/NetServer.hpp"
-#include "../include/I2Ctalker.h"
+// #include "../include/NetServer.hpp"
+// #include "../include/I2Ctalker.h"
 
 // #include <netinet/in.h>
 // #include <stdio.h>
@@ -13,7 +13,9 @@
 // #include <sys/socket.h>
 // #include <unistd.h>
 
-#include <thread>
+// #include <thread>
+
+#include "../include/Main.h"
 
 using namespace std;
 
@@ -121,16 +123,22 @@ int main(){
     //////////////////THREAD TEST//////////////////////
     ///////////////////////////////////////////////////
 
-    I2Ctalker* talker = new I2Ctalker;
-    talker->start();
-    talker->scan();
-    uint8_t tmp[] = {0,2,0,4,5,6,7};
-    talker->send(tmp,7,16);
-    _delay(10000); 
-    talker->send(tmp,7,16);
-    _delay(10000); 
+    // I2Ctalker* talker = new I2Ctalker;
+    // talker->start();
+    // talker->scan();
+    // uint8_t tmp[] = {0,2,0,4,5,6,7};
+    // talker->send(tmp,7,16);
+    // _delay(10000); 
+    // talker->send(tmp,7,16);
+    // _delay(10000); 
 
-    delete talker;
+    // delete talker;
+    ///////////////////////////////////////////////////
+    //////////////////MAIN TEST////////////////////////
+    ///////////////////////////////////////////////////
+
+    Main main;
+    main();
 
     return 0;
 }

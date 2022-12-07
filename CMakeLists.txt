@@ -9,7 +9,8 @@ add_executable(I2C-RPI-SERVER src/main.cpp
                 src/NetServer.cpp 
                 src/I2Ctalker.cpp
                 src/Command.cpp
-                src/wiringPISimulate.cpp)
+                src/wiringPISimulate.cpp
+                src/Main.cpp)
 
 add_link_options(-lwiringPi)
 add_link_options(-pthread)

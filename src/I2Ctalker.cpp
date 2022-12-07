@@ -69,7 +69,10 @@ void I2Ctalker::_send( uint8_t* msg,int size, int adress){
     while ((ret = arduino->i2c_write(msg, size)) != I2C_OK)
     {
         cout << (int)ret<<endl;
-        if(i++>10){
+        if(ret == I2C_SDA_HELD_LOW){
+            _delay(10);
+        }
+        else if(i++>10 ){
             cout << endl<<"error"<<endl;
             exit(1);
         }
@@ -94,7 +97,10 @@ void I2Ctalker::recieve(int adress){
     int i = 0;
     while ((ret = arduino->i2c_read(buff,8))!= I2C_OK){
         cout << (int)ret << endl;
-        if (i++ > 10) {
+        if (ret == I2C_SDA_HELD_LOW){
+            _delay(10);
+        }
+        else if (i++ > 10) {
             cout << endl << "error" << endl;
             exit(1);
         }
@@ -140,5 +146,7 @@ void I2Ctalker::scan(){
             cout << "NOT CONNECTED(" << (int)tmp << ")" << endl;
         }
     }
-
+}
+int I2Ctalker::sentQueueSize(){
+    return toSend.size();
 }
