@@ -30,8 +30,16 @@ void Main::operator()(){
     for(;;){
         int recieved = net->recv();
         if(recieved<=0)
-        break;
+            break;
+        for(int i =0; i<1024; i++){
+            cout<<net->buffor[i];
+
+        }
+        cout <<endl;
         i2c->send((uint8_t*)net->buffor,recieved, 16);
     }
-
+    while (i2c->sentQueueSize() > 0)
+        {
+            _delay(100);
+        }
 }
