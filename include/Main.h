@@ -4,6 +4,8 @@
 #include "I2Ctalker.h"
 #include "NetServer.hpp"
 #include "Command.h"
+#include <fstream>
+#include <nlohmann/json.hpp>
 
 #pragma once
 

@@ -1,5 +1,9 @@
 #include "../include/Main.h"
 
+#include <nlohmann/json.hpp>
+
+using json = nlohmann::json;
+
 Main::Main()
 {
     i2c = new I2Ctalker;
@@ -31,10 +35,14 @@ void Main::operator()(){
         int recieved = net->recv();
         if(recieved<=0)
             break;
-        for(int i =0; i<1024; i++){
-            cout<<net->buffor[i];
-
-        }
+        string tmp = net->buffor;
+        cout << tmp << endl;
+        // json j = json::parse(tmp);
+        // cout << j["command"] << endl;
+        // for(int i =0; i<1024; i++){
+        //     cout<<net->buffor[i];
+            
+        // }
         cout <<endl;
         i2c->send((uint8_t*)net->buffor,recieved, 16);
     }

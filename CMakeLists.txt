@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.2)
+cmake_minimum_required(VERSION 3.11)
 
 project(I2C-RPI-SERVER VERSION 1.0)
 set(CMAKE_C_STANDARD 17)
@@ -16,11 +16,15 @@ add_link_options(-lwiringPi)
 add_link_options(-pthread)
 
 SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -pthread")
+add_subdirectory(lib/nlohmann_json)
 
 add_library(NetServer src/NetServer.cpp)
 
+set(JSON_BuildTests OFF CACHE INTERNAL "")
+
 target_link_libraries(I2C-RPI-SERVER PUBLIC twowire)
 target_link_libraries(I2C-RPI-SERVER PUBLIC wiringPi)
+target_link_libraries(I2C-RPI-SERVER PRIVATE nlohmann_json::nlohmann_json)
 target_compile_features( I2C-RPI-SERVER PUBLIC cxx_std_17)
 
 target_include_directories(I2C-RPI-SERVER PUBLIC
