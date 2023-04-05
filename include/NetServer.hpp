@@ -6,7 +6,7 @@
 #include <netinet/in.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include <string.h>
+#include <string>
 #include <sys/socket.h>
 #include <unistd.h>
 
@@ -18,8 +18,7 @@ public:
 
     struct sockaddr_in address;
     const int addrlen = sizeof(address);
-    char* buffor;
-
+    std::string buffor;
     /**
      * Running "accept". Makes server to wait for the connection.
     */
@@ -34,11 +33,12 @@ public:
      * @param msg data to send
      * @param size size of data
      */
-    void write(uint8_t* msg, int size);
+    void write(std::string msg, int size);
 
 private:
     int server_file;
     int gnd; 
+    char* charBuffor;
 
 };
 

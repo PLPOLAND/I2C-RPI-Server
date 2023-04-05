@@ -1,8 +1,10 @@
 #include "../include/NetServer.hpp"
+#include <iostream>
 
 NetServer::NetServer()
 {
-    buffor = new char[1024];
+    charBuffor = new char[1024];
+    charBuffor[1023] = 0;
     //Create socket file descriptor
     if ((server_file = socket(AF_INET, SOCK_STREAM, 0)) < 0)
     {
@@ -48,7 +50,7 @@ NetServer::NetServer()
 NetServer::~NetServer()
 {
     close(gnd);
-    delete buffor;
+    delete charBuffor;
 }
 
 void NetServer::connect() {
@@ -59,10 +61,17 @@ void NetServer::connect() {
     }
 }
 
-void NetServer::write(uint8_t* msg, int size) {
-    send(gnd, msg, size, 0);
+void NetServer::write(std::string msg, int size) {
+    std::cout << "Sending: " << msg << std::endl;
+    int tmp = send(gnd, msg.c_str(), size, 0);
+    std::cout << "Sent: " << msg << " :"<< tmp << std::endl;
 }
 
 int NetServer::recv() {
-    return read(gnd, buffor, 1024);
+
+    int bytesRead = read(gnd, charBuffor, 1024);
+
+    buffor = std::string(charBuffor).substr(0, bytesRead);
+
+    return bytesRead;
 }

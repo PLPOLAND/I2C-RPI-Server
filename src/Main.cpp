@@ -35,16 +35,28 @@ void Main::operator()(){
         int recieved = net->recv();
         if(recieved<=0)
             break;
-        string tmp = net->buffor;
-        cout << tmp << endl;
-        // json j = json::parse(tmp);
-        // cout << j["command"] << endl;
+        try{
+            json j = json::parse(net->buffor);
+            cout << j["command"] << endl;
+            auto tmp = std::to_string((int)j["id"]);
+            cout << tmp.length() << endl;
+            json j2 = {
+                {"id", j["id"]},
+                {"responseString", "ack"}
+            };
+            net->write(j2.dump() + "\n", (j2.dump() + "\n").length());
+        }
+        catch(json::parse_error& e){
+            cout << "Error while parsing json: " << e.what() << endl;
+            cout << "Error on parsing: " << net->buffor << endl;
+            continue;
+        }
         // for(int i =0; i<1024; i++){
         //     cout<<net->buffor[i];
             
         // }
         cout <<endl;
-        i2c->send((uint8_t*)net->buffor,recieved, 16);
+        // i2c->send((uint8_t*)net->buffor,recieved, 16);
     }
     while (i2c->sentQueueSize() > 0)
         {
