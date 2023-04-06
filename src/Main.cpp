@@ -42,7 +42,8 @@ void Main::operator()(){
             cout << tmp.length() << endl;
             json j2 = {
                 {"id", j["id"]},
-                {"responseString", "ack"}
+                {"responseBytes", {'T','E','S','T'}},
+                {"responseString", ""}
             };
             net->write(j2.dump() + "\n", (j2.dump() + "\n").length());
         }
