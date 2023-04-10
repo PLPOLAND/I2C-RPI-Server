@@ -11,10 +11,21 @@ Command::~Command()
 
 }
 
+/**
+ * @brief Construct a new Command object
+ * @param msg uint8_t array with message to send
+ * @param size size of msg
+ * @param adress adress of slave to send msg
+ */
 Command::Command(uint8_t * msg,int size, int adress) {
     try {
         setAddr(adress);
         setMsg(msg,size);
+        for (size_t i = 0; i < 10; i++)
+        {
+            response[i] = 0;
+        }
+        response_size = 0;
     }
     catch (const char* error) {
         std::cerr << error << std::endl;
@@ -66,6 +77,42 @@ int Command::getAddr() {
 int Command::getMsgSize(){
     return this->msg_size;
 }
+
+///TODO: check if response is not empty
+
+/**
+ * @brief gets response to buff. Copy min(size,response_size) bytes!
+ * @param buff buffer to copy response to
+ * @param size size of buff
+ * @return number of copied bytes
+ */
+int Command::getResponse(uint8_t* buff, int size) {
+    if (size < 10)
+    {
+        std::memcpy(buff, response, std::min(size,response_size));
+    }
+    else{
+        //TODO ERROR
+    }
+    
+    return std::min(size,response_size);
+}
+
+/**
+ * @brief sets response to Command
+ * @param resp response bytes to set
+ * @param size size of resp
+ */
+void Command::setResponse(uint8_t* resp, int size) {
+    if (size<10){
+        std::memcpy(this->response,resp,size);
+        this->response_size = size;
+    }
+    else{
+        //TODO ERROR!
+    }
+}
+
 
 
 std::string Command::toString() {
