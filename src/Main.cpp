@@ -30,15 +30,18 @@ void Main::operator()(){
     // {
     //     _delay(100);
     // }
-    net->connect();
+    net->connect(); //wait for connection
     for(;;){
-        int recieved = net->recv();
+        int recieved = net->recv(); // wait for data, return number of bytes recieved, recieve data to net->buffor
         if(recieved<=0)
             break;
         try{
-            json j = json::parse(net->buffor);
-            cout << j["command"] << endl;
+            json j = json::parse(net->buffor); // parse json from buffor
+            Command cmd = Command::fromJsonObj(j); // create command from json
+            cout << cmd.toString() << endl; // print command info
+            
             auto tmp = std::to_string((int)j["id"]);
+            // j["command"];
             cout << tmp.length() << endl;
             json j2 = {
                 {"id", j["id"]},

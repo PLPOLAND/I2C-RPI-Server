@@ -90,28 +90,28 @@ string I2Ctalker::getMsg(){
 }
 
 void I2Ctalker::recieve(int adress){
-    uint8_t buff[8];
-    arduino->setSlave(adress);
-    //TODO sprawdzić czy istnieje taki adres (NACK)
-    Wstatus ret;
-    int i = 0;
-    while ((ret = arduino->i2c_read(buff,8))!= I2C_OK){
-        cout << (int)ret << endl;
-        if (ret == I2C_SDA_HELD_LOW){
-            _delay(10);
-        }
-        else if (i++ > 10) {
-            cout << endl << "error" << endl;
-            exit(1);
-        }
+    // uint8_t buff[8];
+    // arduino->setSlave(adress);
+    // //TODO sprawdzić czy istnieje taki adres (NACK)
+    // Wstatus ret;
+    // int i = 0;
+    // while ((ret = arduino->i2c_read(buff,8))!= I2C_OK){
+    //     cout << (int)ret << endl;
+    //     if (ret == I2C_SDA_HELD_LOW){
+    //         _delay(10);
+    //     }
+    //     else if (i++ > 10) {
+    //         cout << endl << "error" << endl;
+    //         exit(1);
+    //     }
 
-        //TODO dodać sprawdzanie czy slave się nie zawiesił!  
-    }
-    Command * comm = new Command;
+    //     //TODO dodać sprawdzanie czy slave się nie zawiesił!  
+    // }
+    // Command * comm = new Command;
 
-    comm->setAddr(adress);
-    comm->setMsg(buff,8);
-    this->recieved.push(comm);
+    // comm->setAddr(adress);
+    // comm->setMsg(buff,8);
+    // this->recieved.push(comm);
 }   
 
 /**
@@ -124,11 +124,11 @@ bool I2Ctalker::correctAdress(int adr){
 }
 
 void I2Ctalker::send(uint8_t* msg, int size, int adress ){
-    Command* comm = new Command;
+    // Command* comm = new Command;
 
-    comm->setAddr(adress);
-    comm->setMsg(msg, size);
-    this->toSend.push(comm);
+    // comm->setAddr(adress);
+    // comm->setMsg(msg, size);
+    // this->toSend.push(comm);
 }
 
 void I2Ctalker::scan(){

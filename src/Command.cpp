@@ -1,9 +1,16 @@
 #include "../include/Command.h"
 
-Command::Command()
+/**
+ * @brief Construct a new Command object
+ * 
+ * @param id id of command
+ */
+Command::Command(int id)
 {
-    msg_size = 0;
-    destAddr = 127;
+    this->id = id;
+    this->msg_size = 0;
+    this->destAddr = 127;
+    this->state = CREATED;
 }
 
 Command::~Command()
@@ -17,8 +24,9 @@ Command::~Command()
  * @param size size of msg
  * @param adress adress of slave to send msg
  */
-Command::Command(uint8_t * msg,int size, int adress) {
-    try {
+Command::Command(int id, uint8_t * msg,int size, int adress) {
+    this->id = id;
+        try {
         setAddr(adress);
         setMsg(msg,size);
         for (size_t i = 0; i < 10; i++)
@@ -113,15 +121,33 @@ void Command::setResponse(uint8_t* resp, int size) {
     }
 }
 
+int Command::getResponseSize() {
+    return this->response_size;
+}
 
+int Command::getId() {
+    return this->id;
+}
 
+Command::State Command::getState() {
+    return this->state;
+}
+
+void Command::setState(Command::State state) {
+    this->state = state;
+}
+
+/**
+ * @brief returns string with Command info
+ * @return string with Command info
+ */
 std::string Command::toString() {
     std::string msg = "";
     msg += "Command:(msg=\"";
     for (size_t i = 0; i < msg_size; i++)
     {
         msg += std::to_string(this->msg[i]);
-        msg += " ";
+        msg += ", ";
     }
     msg += "\"; destAddr=\"";
     msg += std::to_string((int)destAddr);
@@ -137,4 +163,18 @@ std::string Command::toString() {
  */
 bool Command::correctAdress(int adr) {
     return !(adr < 8 || adr>127);
+}
+
+
+Command Command::fromJsonObj(nlohmann::json obj) {
+    Command cmd(obj["id"]);
+    cmd.setAddr(obj["address"]);
+    uint8_t msg[10];
+    uint8_t size = obj["command"].size();
+    for (size_t i = 0; i < size; i++)
+    {
+        msg[i] = obj["command"][i];
+    }
+    cmd.setMsg(msg,size);
+    return cmd;
 }
