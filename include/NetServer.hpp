@@ -23,6 +23,13 @@ public:
      * Running "accept". Makes server to wait for the connection.
     */
     void connect();
+
+    /**
+     * Checks if client is connected
+     * @return bool - true if client is connected
+    */
+    bool isConnected();
+
     /**
      * Recievs data from client, save it to buffor
      * @return int - how many bytes was recieved

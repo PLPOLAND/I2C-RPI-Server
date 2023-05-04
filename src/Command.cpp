@@ -149,8 +149,21 @@ std::string Command::toString() {
         msg += std::to_string(this->msg[i]);
         msg += ", ";
     }
+    msg += "\"; msg_size=\"";
+    msg += std::to_string((int)msg_size);
     msg += "\"; destAddr=\"";
     msg += std::to_string((int)destAddr);
+    if(response_size>0){
+        msg += "\"; response=\"";
+        for (size_t i = 0; i < response_size; i++)
+        {
+            msg += std::to_string(this->response[i]);
+            msg += ", ";
+        }
+        msg += "\"; response_size=\"";
+        msg += std::to_string((int)response_size);
+    }
+
     msg += "\")\n";
     return msg;
 }

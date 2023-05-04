@@ -993,7 +993,7 @@ uint8_t TwCore::twi_read_byte(bool nack) {
 
   twi_write_bit(nack);
 
-  std::cout << "read: " << std::bitset<8>(byte) << std::endl;
+  // std::cout << "read: " << std::bitset<8>(byte) << std::endl;
   return byte;
 }
 
@@ -1191,4 +1191,25 @@ Wstatus TwCore::twi_status() {
  *********************************************************************/
 void db_print(char *mes) {
     if (twSetting.dbmes) printf("%s", mes);
+}
+
+
+std::string WstatusToString(Wstatus status){
+    switch(status){
+        case TW_SUCCESS: return "TW_SUCCESS";
+        case TW_ID_ERROR: return "TW_ID_ERROR";
+        case TW_I2C_ERROR: return "TW_I2C_ERROR";
+        case TW_INTERNAL_ERROR: return "TW_INTERNAL_ERROR";
+        case TW_GENERIC_ERROR: return "TW_GENERIC_ERROR";
+        case TW_PARAM_ERROR: return "TW_PARAM_ERROR";
+        case I2C_SCL_HELD_LOW: return "I2C_SCL_HELD_LOW";
+        case I2C_SCL_HELD_LOW_AFTER_READ: return "I2C_SCL_HELD_LOW_AFTER_READ";
+        case I2C_SDA_HELD_LOW: return "I2C_SDA_HELD_LOW";
+        case I2C_SDA_HELD_LOW_AFTER_INIT: return "I2C_SDA_HELD_LOW_AFTER_INIT";
+        case I2C_SDA_NACK: return "I2C_SDA_NACK";
+        case I2C_SCL_CLKSTR: return "I2C_SCL_CLKSTR";
+        case I2C_SDA_DATA: return "I2C_SDA_DATA";
+        case I2C_OK: return "I2C_OK";
+        default: return "UNKNOWN";
+    }
 }

@@ -19,6 +19,7 @@ public:
     ~I2Ctalker();
 
     void send(uint8_t*, int, int);
+    void sendAndRecive(Command*);
     string getMsg();
 
     void start();
@@ -40,6 +41,8 @@ private:
     void _send(uint8_t* msg, int size, int adress);
     
     void recieve(int adress);
+    void recieve(Command* comm);
+
     void operator()();
 
 

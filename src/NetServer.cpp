@@ -53,6 +53,10 @@ NetServer::~NetServer()
     delete charBuffor;
 }
 
+bool NetServer::isConnected() {
+    return gnd <= 0;
+}
+
 void NetServer::connect() {
     if ((gnd = accept(server_file, (struct sockaddr*)&address, (socklen_t*)&addrlen)) < 0)
     {

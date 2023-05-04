@@ -3,6 +3,8 @@
 I2Ctalker::I2Ctalker()
 {
     arduino = new TwoWire;
+    arduino->setClock(50);
+    arduino->setClockStretchLimit(1000);
     arduino->begin(soft_I2C,8,9);
 }
 
@@ -68,12 +70,16 @@ void I2Ctalker::_send( uint8_t* msg,int size, int adress){
     int i = 0;
     while ((ret = arduino->i2c_write(msg, size)) != I2C_OK)
     {
-        cout << (int)ret<<endl;
+        cout <<"something went wrong! Code:"<< WstatusToString(ret)<<endl;
         if(ret == I2C_SDA_HELD_LOW){
             _delay(10);
+            if (i++ > 10) {
+                cout << endl << "error on sending: " << WstatusToString(ret) << endl;
+                exit(1);
+            }
         }
         else if(i++>10 ){
-            cout << endl<<"error"<<endl;
+            cout << endl << "error: " << WstatusToString(ret) << endl;
             exit(1);
         }
         //TODO dodać sprawdzanie czy slave się nie zawiesił!    
@@ -114,6 +120,37 @@ void I2Ctalker::recieve(int adress){
     // this->recieved.push(comm);
 }   
 
+void I2Ctalker::recieve(Command* comm){
+    uint8_t buff[8];
+    arduino->setSlave(comm->getAddr());
+    //TODO sprawdzić czy istnieje taki adres (NACK)
+    Wstatus ret;
+    int i = 0;
+    while ((ret = arduino->i2c_read(buff, 8)) != I2C_OK) {
+        cout << (int)ret << endl;
+        if (ret == I2C_SDA_HELD_LOW) {
+            _delay(10);
+        }
+        else if (i++ > 10) {
+            cout << endl << "error" << endl;
+            exit(1);
+        }
+
+        //TODO dodać sprawdzanie czy slave się nie zawiesił!  
+    }
+    std::string msg = "[";
+    for (size_t i = 0; i < 8; i++)
+    {
+        msg += std::to_string(buff[i]);
+        msg += ", ";
+    }
+    msg += "]";
+    cout << "recieved msg from slave: " << msg << endl;
+    comm->setResponse(buff,8);
+    comm->setState(Command::State::RECIEVED);
+    cout << "recieved from slave: " << comm->toString() << endl;
+}
+
 /**
  * @brief Checks I2C adress is in correct interval
  * @param adr - number to check
@@ -130,6 +167,27 @@ void I2Ctalker::send(uint8_t* msg, int size, int adress ){
     // comm->setMsg(msg, size);
     // this->toSend.push(comm);
 }
+/**
+ * @brief Sends Command to slave and recives response from slave, and saves it in command
+ * 
+ * @param comm command to send
+ */
+void I2Ctalker::sendAndRecive(Command* comm){
+    uint8_t buff[10];
+    uint8_t buff_size = comm->getMsg(buff, comm->getMsgSize()); // get msg from command
+    std::string msg = "[";
+    for (size_t i = 0; i < buff_size; i++)
+    {
+        msg += std::to_string(buff[i]);
+        msg += ", ";
+    }
+    msg += "]";
+    std::cout << "Sending: " << (int)buff_size << "buff: " << buff << "to: " << comm->getAddr() << std::endl;
+    _send(buff, buff_size, comm->getAddr());
+
+    recieve(comm);
+    cout << "recieved: " << comm->toString() << endl;
+}
 
 void I2Ctalker::scan(){
 
@@ -140,7 +198,7 @@ void I2Ctalker::scan(){
         tmp = arduino->i2c_write(msg,1);
         cout<<i<<":\t";
         if(tmp != I2C_SDA_NACK){
-            cout << "OK ("<<(int)tmp<<")"<<endl;
+            cout << "OK ("<<WstatusToString(tmp)<<")"<<endl;
         }
         else{
             cout << "NOT CONNECTED(" << (int)tmp << ")" << endl;

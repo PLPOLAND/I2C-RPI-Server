@@ -121,6 +121,8 @@ typedef enum
     //...
 } Wstatus;
 
+std::string WstatusToString(Wstatus status);
+
 /* display driver message if requested */
 void db_print(char *mes);
 
