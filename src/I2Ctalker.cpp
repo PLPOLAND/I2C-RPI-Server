@@ -3,9 +3,9 @@
 I2Ctalker::I2Ctalker()
 {
     arduino = new TwoWire;
-    arduino->setClock(50);
-    arduino->setClockStretchLimit(1000);
     arduino->begin(soft_I2C,8,9);
+    // arduino->setClock(1);
+    // arduino->setClockStretchLimit(20000);
 }
 
 I2Ctalker::~I2Ctalker()
@@ -121,7 +121,7 @@ void I2Ctalker::recieve(int adress){
 }   
 
 void I2Ctalker::recieve(Command* comm){
-    uint8_t buff[8];
+    uint8_t buff[8]={255};
     arduino->setSlave(comm->getAddr());
     //TODO sprawdzić czy istnieje taki adres (NACK)
     Wstatus ret;
@@ -184,8 +184,9 @@ void I2Ctalker::sendAndRecive(Command* comm){
     msg += "]";
     std::cout << "Sending: " << (int)buff_size << "buff: " << buff << "to: " << comm->getAddr() << std::endl;
     _send(buff, buff_size, comm->getAddr());
-
+    _delay(1000);
     recieve(comm);
+    arduino->DispClockStretch();
     cout << "recieved: " << comm->toString() << endl;
 }
 
@@ -204,6 +205,7 @@ void I2Ctalker::scan(){
             cout << "NOT CONNECTED(" << (int)tmp << ")" << endl;
         }
     }
+    arduino->ClrStretchStat();
 }
 int I2Ctalker::sentQueueSize(){
     return toSend.size();

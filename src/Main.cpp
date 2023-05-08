@@ -8,7 +8,7 @@ Main::Main()
 {
     i2c = new I2Ctalker;
     net = new NetServer;
-    i2c->start();
+    // i2c->start();
 }
 
 Main::~Main()
@@ -18,15 +18,15 @@ Main::~Main()
 }
 
 void Main::operator()(){
-    i2c->scan();
+    // i2c->scan();
     Command cmd(0);
     cmd.setMsg(((uint8_t*)"I"),1);
     cmd.setAddr(0x0E);
     i2c->sendAndRecive(&cmd);
     cout << cmd.toString() << endl;
     this->thr = new std::thread(&Main::runCommunication, this);
-    for(;;)
-    ;
+    // for(;;)
+    // _delay(1000);
     
     while (i2c->sentQueueSize() > 0)
         {

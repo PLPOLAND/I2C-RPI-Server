@@ -993,7 +993,7 @@ uint8_t TwCore::twi_read_byte(bool nack) {
 
   twi_write_bit(nack);
 
-  // std::cout << "read: " << std::bitset<8>(byte) << std::endl;
+  std::cout << "read: " << std::bitset<8>(byte) << std::endl;
   return byte;
 }
 
